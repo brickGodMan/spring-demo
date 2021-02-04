@@ -1,6 +1,7 @@
 package com.qiancy.springboot.api;
 
 import com.qiancy.springboot.utils.ActualBeanProcessorMapping;
+import com.qiancy.springboot.utils.RequestMappingHandleMapingBeanProcessor;
 import com.qiancy.springboot.utils.RequestMappingInfoProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,9 +29,20 @@ public class DefaultActualApiProcessor implements ApiProcessor<Object> {
     @Autowired
     private ActualBeanProcessorMapping actualBeanProcessorMapping;
 
+    @Autowired
+    private RequestMappingHandleMapingBeanProcessor requestMappingHandleMapingBeanProcessor;
+
     @Override
     public <Rsp> Rsp process(Object req) {
-        RequestMappingInfo requestMappingInfo = requestMappingInfoProcessor.getRequestMappingInfo(request);
-        return (Rsp) actualBeanProcessorMapping.getActualApiProcessor(requestMappingInfo).process(req);
+        //第一种
+//        RequestMappingInfo requestMappingInfo = requestMappingInfoProcessor.getRequestMappingInfo(request);
+        //第二种
+        try {
+            RequestMappingInfo requestMappingInfo = requestMappingHandleMapingBeanProcessor.getRequestMappingInfo(request);
+            return (Rsp) actualBeanProcessorMapping.getActualApiProcessor(requestMappingInfo).process(req);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
